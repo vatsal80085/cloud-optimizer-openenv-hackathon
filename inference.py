@@ -1,9 +1,12 @@
 import os
 import json
+from dotenv import load_dotenv
 from openai import OpenAI
-# If your environment file is named differently, update the import below:
 from server.cloud_optimizer_environment import CloudOptimizerEnvironment
 from models import Action
+
+# Unlock the .env vault securely
+load_dotenv()
 
 # 1. Read required Hackathon environment variables
 API_BASE_URL = os.getenv("API_BASE_URL", "https://api.openai.com/v1") 
@@ -11,9 +14,9 @@ MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4o-mini")
 HF_TOKEN = os.getenv("HF_TOKEN")
 
 if HF_TOKEN is None:
-    raise ValueError("HF_TOKEN environment variable is required! Set it in your terminal.")
+    raise ValueError("HF_TOKEN is missing! Did you save it in your .env file?")
 
-# 2. Initialize HF Router Client
+# 2. Initialize the Client
 client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN)
 
 def get_ai_action(observation_json: str) -> Action:
