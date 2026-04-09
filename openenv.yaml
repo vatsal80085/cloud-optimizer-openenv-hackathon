@@ -1,0 +1,87 @@
+name: cloud-cost-optimizer
+version: "1.0.0"
+description: >
+  OpenEnv-compatible environment for cloud infrastructure cost optimization.
+  The agent reviews server utilization and chooses whether to keep, downsize,
+  or terminate each server while preserving critical production systems.
+
+author: Vatsal Agarwal
+tags:
+  - openenv
+  - cloud
+  - infrastructure
+  - cost-optimization
+  - devops
+  - real-world
+
+tasks:
+  - id: task_easy_001
+    difficulty: easy
+    description: "Terminate a clearly abandoned low-utilization test server"
+    reset_params:
+      difficulty: easy
+
+  - id: task_medium_001
+    difficulty: medium
+    description: "Balance production safety with backup cleanup and cache downsizing"
+    reset_params:
+      difficulty: medium
+
+  - id: task_hard_001
+    difficulty: hard
+    description: "Optimize a mixed production estate with multiple critical and non-critical servers"
+    reset_params:
+      difficulty: hard
+
+action_space:
+  type: object
+  properties:
+    action_type:
+      type: string
+      enum: [terminate, downsize, keep]
+    server_id:
+      type: string
+  required:
+    - action_type
+    - server_id
+
+observation_space:
+  type: object
+  properties:
+    active_servers:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+          role:
+            type: string
+          cpu_usage:
+            type: string
+          correct_action:
+            type: string
+        required:
+          - id
+          - role
+          - cpu_usage
+          - correct_action
+    feedback:
+      type: string
+  required:
+    - active_servers
+    - feedback
+
+reward:
+  min: 0.0
+  max: 1.0
+  description: >
+    Reward is 1.0 for the correct action on a target server and 0.0 for an
+    incorrect action. Fatal penalties occur when a critical production server
+    is terminated incorrectly.
+
+endpoints:
+  health: GET /health
+  reset: POST /reset
+  step: POST /step
+  state: GET /state
